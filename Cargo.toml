@@ -18,14 +18,17 @@ curl-sys = { path = "curl-sys", version = "0.4.77", default-features = false }
 socket2 = "0.5.0"
 
 # Unix platforms use OpenSSL for now to provide SSL functionality
-[target.'cfg(all(unix, not(target_os = "macos")))'.dependencies]
+[target.'cfg(all(unix, not(any(target_os = "macos", target_os = "horizon"))))'.dependencies]
 openssl-sys = { version = "0.9.64", optional = true }
 openssl-probe = { version = "0.1.2", optional = true }
 
 [target.'cfg(target_env = "msvc")'.dependencies]
 schannel = "0.1.13"
-windows-sys = { version = "0.52", features = ["Win32_Foundation", "Win32_System_LibraryLoader", "Win32_Security_Cryptography"] }
-
+windows-sys = { version = "0.52", features = [
+    "Win32_Foundation",
+    "Win32_System_LibraryLoader",
+    "Win32_Security_Cryptography",
+] }
 [dev-dependencies]
 mio = "0.6"
 mio-extras = "2.0.3"
@@ -36,7 +39,11 @@ members = ["systest"]
 
 [features]
 default = ["ssl"]
-ssl = ["openssl-sys", "openssl-probe", "curl-sys/ssl"] # OpenSSL/system TLS backend
+ssl = [
+    "openssl-sys",
+    "openssl-probe",
+    "curl-sys/ssl",
+] # OpenSSL/system TLS backend
 mesalink = ["curl-sys/mesalink"] # MesaLink TLS backend
 http2 = ["curl-sys/http2"]
 spnego = ["curl-sys/spnego"]
